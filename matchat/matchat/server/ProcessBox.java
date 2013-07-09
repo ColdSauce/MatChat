@@ -7,11 +7,13 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import matchat.message.Message;
 import matchat.message.MessageBox;
+import matchat.message.Notification;
 
 public class ProcessBox {
 	MessageBox messageBox ;
 	SimpleDataStore data ;
-	Map< String , MessageBox > MessageMap = new HashMap<String , MessageBox > () ;  
+	Map< String , MessageBox > MessageMap = new HashMap<String , MessageBox > () ; 
+	boolean replyon = true ;
 	/**
 	 * Construct a processbox with the MessageBox it is responsible for processing and the SimpleDataStore it
 	 * uses for the operation
@@ -31,7 +33,7 @@ public class ProcessBox {
 		
 		Iterator<Message> it = messageBox.iterator();
 		String username = messageBox.from();
-		
+		//if (username == null) System.out.println ("Poop!") ;
 		while (it.hasNext()) {
 			//have the SimpleDataStore take all required messages 
 			Message current = it.next() ;
@@ -47,6 +49,9 @@ public class ProcessBox {
 	 * @param user
 	 * @return
 	 */
+	private void processNotification (Notification message) {
+		
+	}
 	private MessageBox generateMessage(String user) {
 		MessageBox box = new MessageBox (new Date() , messageBox.ID()+1);
 		boolean next = true ;

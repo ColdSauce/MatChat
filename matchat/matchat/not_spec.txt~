@@ -1,0 +1,32 @@
+Matchat Notification Specification
+The array of notifications is set up like this
+
+[ <Command> , <Command> , ... ]
+
+Whitespace is skipped.
+
+BNF
+
+<command> ::= <command name> <arguments>
+<command name> ::== <word>
+<arguments> ::= <word> , <arguments> | <word> | 
+
+<word> is the following ['A'..'B' , 'a'..'b' , '0'..'9' , '_' ]
+
+The basic queries
+
+Client queries
+--------------
+Syntax <->	Definition
+
+REPLY_OFF <-> Tell the box processor to turn reply flag off. 
+REPLY_ON <-> Tell the box processor to reply. Higher precedence than REPLY_OFF
+
+RESEND_REQUEST [ ID , ... ] <-> Request messages with those IDs be sent to client
+
+Server queries
+--------------
+Syntax <->	Definition
+
+MESSAGE_NOTFOUND [ID , ...] <-> The following message IDs were not available for client
+SESSION_TOKEN token expiry<-> 

@@ -38,6 +38,16 @@ public class MessageBox implements Serializable , Iterable<Message> {
 		messages = new Message[10];
 	}
 	
+	public MessageBox(Date sent , long ID , String from) throws IllegalArgumentException{
+		if (sent==null ) {
+			throw new IllegalArgumentException("Date object cannot be null!");
+		}
+		this.sent = sent;
+		this.ID = ID;
+		this.fromUsername = from;
+		messages = new Message[10];
+	}
+	
 	public void addMessage(Message m) {
 		/**
 		 * Add a message to the tail of Message array
@@ -70,7 +80,7 @@ public class MessageBox implements Serializable , Iterable<Message> {
 	private void ensurecapacity() {
 		if (messages.length >= quantity+1) {
 			//double array
-			Message[] temp = new Message[quantity*2];
+			Message[] temp = new Message[quantity*2 + 1];
 			//copy it
 			for (int i=0 ; i<quantity ; i++) {
 				temp[i] = messages[i];
@@ -182,9 +192,10 @@ class MessageIterator<E extends Message> implements Iterator<E> , Serializable{
 	private E[] messages;
 	private int messageIndex;
 	private int quantity ;
-	public MessageIterator(Message[] messagesSrc , int quantity) {
-		messages = (E[]) new Message[quantity] ;
-		System.arraycopy(messagesSrc , 0  , this.messages , 0 , quantity);
+	public MessageIterator(Message[] messagesSrc , int quantitySrc) {
+		messages = (E[]) new Message[quantitySrc] ;
+		System.arraycopy(messagesSrc , 0  , this.messages , 0 , quantitySrc);
+		this.quantity = quantitySrc ;
 	}
 	
 	public boolean hasNext() {
@@ -194,7 +205,7 @@ class MessageIterator<E extends Message> implements Iterator<E> , Serializable{
 	public E next() {
 		// TODO Auto-generated method stub
 		if (hasNext()) { 
-			return messages[++messageIndex] ;
+			return messages[messageIndex++] ;
 		}else {
 			throw new UnsupportedOperationException () ;
 		}
