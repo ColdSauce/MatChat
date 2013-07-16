@@ -6,6 +6,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+import matchat.server.store.SimpleDataStore;
+
 public class SimpleServerListener implements Runnable{
 	ServerSocket socket ;
 	private static int maxClients = 10 ;

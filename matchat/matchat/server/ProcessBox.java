@@ -8,6 +8,7 @@ import java.util.NoSuchElementException;
 import matchat.message.Message;
 import matchat.message.MessageBox;
 import matchat.message.Notification;
+import matchat.server.store.SimpleDataStore;
 
 public class ProcessBox {
 	MessageBox messageBox ;

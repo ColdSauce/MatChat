@@ -7,6 +7,7 @@ import java.net.Socket;
 import java.util.Iterator;
 
 import matchat.message.*;
+import matchat.server.store.SimpleDataStore;
 
 public class ServeJob implements Runnable{
 	/**

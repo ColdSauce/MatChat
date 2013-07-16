@@ -3,6 +3,7 @@ package matchat.message;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 
 public class MessageBox implements Serializable , Iterable<Message> {
 	/**
@@ -182,6 +183,10 @@ public class MessageBox implements Serializable , Iterable<Message> {
 	@Override
 	public Iterator<Message> iterator() {
 		return (Iterator<Message>) new MessageIterator<Message>(messages , quantity) ;
+	}
+	
+	public List<Notification> notifications() {
+		return null ;
 	}
 }
 class MessageIterator<E extends Message> implements Iterator<E> , Serializable{

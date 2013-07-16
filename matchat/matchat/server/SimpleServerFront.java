@@ -4,6 +4,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import matchat.message.Message;
+import matchat.server.store.SimpleDataStore;
 
 
 public class SimpleServerFront {
