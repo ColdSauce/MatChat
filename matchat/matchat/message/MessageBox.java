@@ -79,7 +79,7 @@ public class MessageBox implements Serializable , Iterable<Message> {
 		quantity--;
 	}
 	private void ensurecapacity() {
-		if (messages.length >= quantity+1) {
+		if (messages.length == quantity) {
 			//double array
 			Message[] temp = new Message[quantity*2 + 1];
 			//copy it
