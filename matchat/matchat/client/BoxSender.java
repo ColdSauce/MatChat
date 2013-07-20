@@ -8,89 +8,69 @@ import java.net.UnknownHostException;
 
 import matchat.message.MessageBox;
 
-public class BoxSender implements Sender {
+public final class BoxSender {
 	
 	private static final int DEFAULT_PORT = 4343; //default values set
 	private static final String DEFAULT_HOST = "localhost"; //default values set
-	private int port = 4343; //default values set
-	private String host = "localhost"; //default values set
-	private MessageBox toSend;
+	
+	private final int port; //default values set
+	private final String host; //default values set
+	
+	private final MessageBox toBeSent;
+	
+	
 	private static int maxSendAttempts = 5;
 	
-	public BoxSender(String host , int port) {
-		assert host != null : "Host supplied to BoxSender cannot be null!" ;
-		//makes a term of contract with object creating BoxSender that 
-		//host is nonnull
-		assert port < 65535 && port > 0 ;
-		// TCP/UPD port invariant must hold
+	public BoxSender(MessageBox toBeSent, String host, int port) {
+		nullCheck(toBeSent, host);
+		portCheck(port);
+		
+		this.toBeSent = toBeSent;
 		this.host = host;
 		this.port = port;
 	}
-	public BoxSender() {
-		/*
-		 * First the default invariants are checked. Then we set the instance
-		 * values to the default
-		 */
-		assert DEFAULT_HOST != null : "Host supplied to BoxSender cannot be null! Static 'host' field must be set" ;
-		//makes a term of contract with object creating BoxSender that 
-		//host is nonnull
-		assert DEFAULT_PORT < 65535 && DEFAULT_PORT > 0 : "Port supplied must be valud. Static 'port' field must be set";
-		// TCP/UPD port invariant must hold
+	public BoxSender(MessageBox toBeSent) {
+		nullCheck(toBeSent);
+		
+		this.toBeSent = toBeSent;
 		this.port = DEFAULT_PORT ;
 		this.host = DEFAULT_HOST;
 	}
-	@Override
-	public void setMessageBox(MessageBox box) throws IllegalArgumentException{ //checked exception requires client to supply good arguments!
-		if (box==null) throw new IllegalArgumentException("Sender cannot have a null box");
-		toSend = box;
-	}
-	@Override
-	public void send() {
-		boolean finished = false;
+	
+	public void send() throws IOException {
 		int attempts = 0;
-		while (!finished && attempts<maxSendAttempts) {
+		while (attempts < maxSendAttempts) {
 			Socket s = null;
-			OutputStream o = null;
-			ObjectOutputStream boxObOut = null;
+			OutputStream os = null;
+			ObjectOutputStream oos = null;
 			try {
-				s = new Socket(host , port);
-				o = s.getOutputStream();
-				boxObOut = new ObjectOutputStream(o);
-				boxObOut.writeObject(boxObOut);
+				s = new Socket(host, port);
+				os = s.getOutputStream();
+				oos = new ObjectOutputStream(os);
+				oos.writeObject(toBeSent);
 				
 			} catch (UnknownHostException e) {
 				e.printStackTrace();
 				System.out.println("Could not connect to unknown host");
-			} catch (IOException e) {
-				System.out.println("An IO exception occurred");
-				e.printStackTrace();
-			} 
-			try { 
-				if (boxObOut!=null) boxObOut.close();
-				if (o!=null) o.close();
-				if (s!=null) s.close();
-			} catch (IOException e) {
-				System.out.println("Could not close sockets");
+			} finally {
+				try {
+					if (oos != null) oos.close();
+					if (os != null) os.close();
+					if (s != null) s.close();
+				} catch (IOException e) {
+					throw e;
+				}
 			}
 		}
 	}
-
-	@Override
-	public void changeHost(String host) throws IllegalArgumentException {
-		if (host == null) throw new IllegalArgumentException("Sender cannot have a null host");
-		this.host = host ;
+	
+	private void nullCheck(Object ... o) {
+		if (o == null) throw new NullPointerException();
 	}
-
-	@Override
-	public void changePort(int port) throws IllegalArgumentException{
-		if (port < 0 || port >= 65536 ) throw new IllegalArgumentException ("Invalid port specified: "+port) ;
-		this.port = port;
-	}
-
-	@Override
-	public MessageBox getReceipt() {
-		// TODO Auto-generated method stub
-		return null;
+	
+	private void portCheck(int port) {
+		if (port < 0 || port >= 65536)
+			throw new IllegalArgumentException("Invalid port specified: " + port);
 	}
 
 }

@@ -1,7 +1,7 @@
 package matchat.message;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -10,45 +10,36 @@ public class MessageBox implements Serializable , Iterable<Message> {
 	 * Development serial version UID in use - 1L 
 	 */
 	private static final long serialVersionUID = 1L;
+	
 	//The server database may be concerned with these fields
-	private long ID ;
+	private final long ID ;
+	
+	
 	private String fromUsername ;
 	private String toUsername ;
-	//The receiver of messages will be concerned with these fields
-	private int quantity = 0; 
-	private Date sent ;
-	private Message[] messages;
 	
-	public MessageBox(Date sent , String from , String to , long ID) throws IllegalArgumentException{
-		if (sent==null || from == null || to==null) {
-			throw new IllegalArgumentException("Null value detected in Date or user fields");
-		}
-		this.sent = sent;
+	private List<Message> messages;
+	
+	public MessageBox(String from, String to, long ID) {
+		nullCheck(from, to);
 		this.fromUsername = from;
 		this.toUsername = to;
 		this.ID = ID;
-		messages = new Message[10];
+		
+		messages = new ArrayList<Message>();
 	}
 	
-	public MessageBox(Date sent , long ID) throws IllegalArgumentException{
-		if (sent==null ) {
-			throw new IllegalArgumentException("Date object cannot be null!");
-		}
-		this.sent = sent;
+	public MessageBox(long ID) {
 		this.ID = ID;
-		messages = new Message[10];
+		
+		messages = new ArrayList<Message>();
 	}
 	
-	public MessageBox(Date sent , long ID , String from) throws IllegalArgumentException{
-		if (sent==null ) {
-			throw new IllegalArgumentException("Date object cannot be null!");
-		}
-		this.sent = sent;
-		this.ID = ID;
-		this.fromUsername = from;
-		messages = new Message[10];
+	public boolean addMessage(Message message) {
+		return messages.add(message);
 	}
 	
+<<<<<<< HEAD
 	public void addMessage(Message m) {
 		/**
 		 * Add a message to the tail of Message array
@@ -95,35 +86,38 @@ public class MessageBox implements Serializable , Iterable<Message> {
 			}
 			this.messages = temp;
 		}
+=======
+	public Message removeMessage(int index) {
+		indexCheck(index);
+		
+		return messages.remove(index);
+>>>>>>> d87aa39cbe68309071eb7361ae18d6b947eaf21a
 	}
-	public Message getItem(int index) {
-		/**
-		 * Return the message object stored at the given index.
-		 * Throws IllegalArgumentException when bad input is given
-		 */
-		if (index+1>quantity) {
-			throw new IllegalArgumentException("No message with index "+index+" exists on this mailbox");
-		}
-		if (index<0) {
-			throw new IllegalArgumentException("Non-positive integer encountered for message index");
-		}
-		return messages[index];
+	
+	public Message getMessage(int index) {
+		indexCheck(index);
+		
+		return messages.get(index);
 	}
+	
 	public Message changeItem(int index , Message message) {
-		/**
-		 * Return the message object stored at the given index, whilst changing it to the new value given
-		 * Throws IllegalArgumentException when bad input is given
-		 */
-		if (index+1>quantity) {
-			throw new IllegalArgumentException("Error modifying MessageBox index. No message with index "+index+" exists on this mailbox");
-		}
-		if (index<0) {
-			throw new IllegalArgumentException("Error modifying MessageBox index. Non-positive integer encountered for message index");
-		}
-		Message temp = messages[index];
-		messages[index] = message;
-		return temp;
+		indexCheck(index);
+		
+		//point to old message
+		Message oldMessage = getMessage(index);
+		
+		//swap new message and old message
+		messages.set(index, message);
+		
+		return oldMessage;
 	}
+	
+	//check for index boundary violations
+	private void indexCheck(int index) {
+		if (index < 0 || index >= messages.size()) 
+			throw new IllegalArgumentException("Invalid index: " + index);
+	}
+	
 	/**
 	 * Get username message box is addressed to
 	 * @return Username of recipient
@@ -131,6 +125,7 @@ public class MessageBox implements Serializable , Iterable<Message> {
 	public String to() {
 		return toUsername;
 	}
+	
 	/**
 	 * Get username of user who sent message box
 	 * @return Sender's username
@@ -138,6 +133,7 @@ public class MessageBox implements Serializable , Iterable<Message> {
 	public String from() {
 		return fromUsername;
 	}
+	
 	/**
 	 * Unique identifying number for this specific message box. The scope of this ID spans the entire 
 	 * MatChat deployment, such that no ID is shared by any two users of the system
@@ -146,33 +142,29 @@ public class MessageBox implements Serializable , Iterable<Message> {
 	public long ID() {
 		return ID;
 	}
+	
 	/**
 	 * Returns the number of messages associated with and being delivered by the mailbox
 	 * @return Message count 
 	 */
 	public int quantity() {
-		return quantity;
+		return messages.size();
 	}
+	
 	/**
 	 * Modify field of recipient
 	 * @param to
 	 */
 	public void setTo(String to) {
-		if (to==null) throw new IllegalArgumentException("Recipient username cannot be null");
+		nullCheck(to);
 		this.toUsername = to;
 	}
-	/**
-	 * Change the recipient  
-	 * @param from username of recipient
-	 */
-	public void setfrom(String from) {
-		if (from==null) throw new IllegalArgumentException("Sender username cannot be null");
-		this.fromUsername = from;
-	}
+	
 	/**
 	 * Change the sender  
 	 * @param from username of sender
 	 */
+<<<<<<< HEAD
 	public void setID(long ID) {
 		this.ID = ID;
 	}
@@ -201,23 +193,21 @@ class MessageIterator<E extends Message> implements Iterator<E> , Serializable{
 		messages = (E[]) new Message[quantitySrc] ;
 		System.arraycopy(messagesSrc , 0  , this.messages , 0 , quantitySrc);
 		this.quantity = quantitySrc ;
+=======
+	public void setFrom(String from) {
+		nullCheck(from);
+		this.fromUsername = from;
+>>>>>>> d87aa39cbe68309071eb7361ae18d6b947eaf21a
+	}
+
+	private void nullCheck(Object ... o) {
+		if (o == null) 
+			throw new NullPointerException("Null argument: " + o);
 	}
 	
-	public boolean hasNext() {
-		return messageIndex<quantity ;
+	@Override
+	public Iterator<Message> iterator() {
+		return messages.iterator();
 	}
 	
-	public E next() {
-		// TODO Auto-generated method stub
-		if (hasNext()) { 
-			return messages[messageIndex++] ;
-		}else {
-			throw new UnsupportedOperationException () ;
-		}
-		
-	}
-	
-	public void remove() {
-		throw new UnsupportedOperationException() ;
-	}
 }

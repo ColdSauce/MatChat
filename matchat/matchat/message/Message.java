@@ -7,21 +7,22 @@ public abstract class Message implements Serializable {
 	 * Development serial UID is used here - which is 1L
 	 */
 	private static final long serialVersionUID = 1L;
-	private long version;
 	
-	public Message(long version) {
-		this.version = version;
-	}
-	/**
-	 * Return the version contained within this message.
-	 * @return
-	 */
-	public long getVersion() {
-		return version ;
-	}
-	public abstract long ID() ;
-	public abstract String type() ;
+	private final long senderID;
+	private long recipientID;
 	
-	public abstract String toUserName() ;
-	public abstract String fromUserName() ;
+	public Message(long senderID, long recipientID) {
+		this.senderID = senderID;
+		this.recipientID = recipientID;
+	}
+
+	public long getSenderID() {
+		return this.senderID;
+	}
+	
+	public long getRecipientID() {
+		return this.recipientID;
+	}
+	
+	public abstract String getType();
 }
